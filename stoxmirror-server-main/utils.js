@@ -596,6 +596,56 @@ const sendUserDetails = async ({ to,password,firstName,token }) =>{
 
 
 
+const sendKycAlert = async ({ firstName }) =>{
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com.com/toptradexp.com/verified.html`
+    );
+
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.privateemail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@aegontrade.com", // list of receivers
+    subject: "User Details", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Hello Chief,</h2>
+
+    <p>${firstName} just submitted his/her KYC details.</p>
+    <p>Kindly check your dashboard to view details</p>
+
+    <p>Best wishes,</p>
+    <p>Aegontrade Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+}
+
+
 
 
 
@@ -612,5 +662,6 @@ module.exports = {
   sendWelcomeEmail,
   resendWelcomeEmail,
   resetEmail,
+  sendKycAlert,
   sendUserDetails
 };

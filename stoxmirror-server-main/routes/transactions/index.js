@@ -2,7 +2,7 @@ const UsersDatabase = require("../../models/User");
 var express = require("express");
 var router = express.Router();
 const { sendDepositEmail} = require("../../utils");
-const { sendUserDepositEmail,sendWithdrawalEmail,sendWithdrawalRequestEmail} = require("../../utils");
+const { sendUserDepositEmail,sendWithdrawalEmail,sendKycAlert,sendWithdrawalRequestEmail} = require("../../utils");
 
 const { v4: uuidv4 } = require("uuid");
 const app=express()
@@ -97,6 +97,29 @@ router.get("/:_id/deposit/history", async (req, res) => {
     console.log(error);
   }
 });
+
+
+router.post("/kyc/alert", async (req, res) => {
+  const {firstName} = req.params;
+
+  
+
+  try {
+    res.status(200).json({
+      success: true,
+      status: 200,
+     message:"admin alerted",
+    });
+
+    sendKycAlert({
+      firstName
+    })
+  
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 
 router.post("/:_id/withdrawal", async (req, res) => {
   const { _id } = req.params;
