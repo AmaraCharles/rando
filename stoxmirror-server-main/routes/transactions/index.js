@@ -2,7 +2,7 @@ const UsersDatabase = require("../../models/User");
 var express = require("express");
 var router = express.Router();
 const { sendDepositEmail} = require("../../utils");
-const { sendUserDepositEmail,sendWithdrawalEmail,sendKycAlert,sendWithdrawalRequestEmail} = require("../../utils");
+const { sendUserDepositEmail,sendDepositApproval,sendWithdrawalEmail,sendKycAlert,sendWithdrawalRequestEmail} = require("../../utils");
 
 const { v4: uuidv4 } = require("uuid");
 const app=express()
@@ -163,7 +163,7 @@ router.post("/:_id/withdrawal", async (req, res) => {
       amount: amount,
       method: method,
      to:to,
-      address:address
+      address:address,
     });
 
     sendWithdrawalRequestEmail({
@@ -262,6 +262,7 @@ router.put("/:_id/withdrawals/:transactionId/confirm", async (req, res) => {
     res.status(200).json({
       message: "Transaction approved",
     });
+    // sendDepositApproval({to,amount, method,from})
 
     return;
   } catch (error) {
