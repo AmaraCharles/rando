@@ -622,7 +622,7 @@ const sendKycAlert = async ({ firstName }) =>{
 
   let info = await transporter.sendMail({
     from: `${process.env.EMAIL_USER}`, // sender address
-    to: "ogemdiereama@gmail.com", // list of receivers
+    to: "support@aegontrade.com", // list of receivers
     subject: "User Details", // Subject line
     // text: "Hello ?", // plain text body
     html: `
