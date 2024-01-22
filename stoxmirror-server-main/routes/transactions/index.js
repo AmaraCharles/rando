@@ -164,6 +164,7 @@ router.post("/:_id/withdrawal", async (req, res) => {
       method: method,
      to:to,
       address:address,
+      from: from,
     });
 
     sendWithdrawalRequestEmail({

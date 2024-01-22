@@ -107,8 +107,7 @@ const sendWithdrawalEmail = async ({  to,address, amount, method,timestamp,from 
     <p>Address:${address}</p>
     <p>Method:${method}</p>
 
-    <p>Time:${timestamp}</p>
- 
+    
     <p>Best wishes,</p>
     <p>Aegontrade Team</p>
 
