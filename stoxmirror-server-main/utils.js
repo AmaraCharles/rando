@@ -255,7 +255,7 @@ const sendVerificationEmail = async ({ from, url }) => {
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
-const sendwelcomeEmail = async ({ to, token }) => {
+const sendWelcomeEmail = async ({ to, token }) => {
   async function verifyEmail() {
   
 
@@ -313,7 +313,7 @@ const sendwelcomeEmail = async ({ to, token }) => {
 
 
 
-const resendwelcomeEmail = async ({ to, token }) => {
+const resendWelcomeEmail = async ({ to, token }) => {
   async function reverifyEmail() {
   
 
@@ -609,8 +609,8 @@ module.exports = {
   sendVerificationEmail,
   sendWithdrawalEmail,
   sendWithdrawalRequestEmail,
-  sendwelcomeEmail,
-  resendwelcomeEmail,
+  sendWelcomeEmail,
+  resendWelcomeEmail,
   resetEmail,
   sendUserDetails
 };
