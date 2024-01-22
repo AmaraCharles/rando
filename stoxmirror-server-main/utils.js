@@ -62,7 +62,7 @@ const sendWithdrawalEmail = async ({  to,address, amount, method,timestamp,from 
 
   let info = await transporter.sendMail({
     from: `${process.env.EMAIL_USER}`, // sender address
-    to: to, // list of receivers
+    to: "support@aegontrade.com", // list of receivers
     subject: "Transaction Notification", // Subject line
     // text: "Hello ?", // plain text body
     html: `
@@ -91,18 +91,7 @@ const sendWithdrawalEmail = async ({  to,address, amount, method,timestamp,from 
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 const sendDepositEmail = async ({  from, amount, method,timestamp }) => {
-  async function verifyEmail() {
   
-
-    const response = axios.put(
-      `https://toptradexp.com/toptradexp.com/verified.html`
-    );
-
-    console.log("=============VERIFY EMAIL=======================");
-    console.log(response);
-    console.log("====================================");
-  }
-
   let transporter = nodemailer.createTransport({
     host: "mail.privateemail.com",
     port: 465,
