@@ -100,7 +100,7 @@ router.get("/:_id/deposit/history", async (req, res) => {
 
 
 router.post("/kyc/alert", async (req, res) => {
-  const {firstName} = req.params;
+  const {firstName} = req.body;
 
   
 
