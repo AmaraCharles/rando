@@ -1,8 +1,8 @@
 const UsersDatabase = require("../../models/User");
 var express = require("express");
 var router = express.Router();
-const { sendDepositEmail} = require("../../utils");
-const { sendUserDepositEmail,sendDepositApproval,sendWithdrawalEmail,sendKycAlert,sendWithdrawalRequestEmail} = require("../../utils");
+const { sendDepositEmail,sendPlanEmail} = require("../../utils");
+const { sendUserDepositEmail,sendUserPlanEmail,sendWithdrawalEmail,sendWithdrawalRequestEmail} = require("../../utils");
 
 const { v4: uuidv4 } = require("uuid");
 const app=express()
@@ -36,7 +36,8 @@ router.post("/:_id/deposit", async (req, res) => {
           type: "Deposit",
           amount,
           from,
-          timestamp
+          status:"pending",
+          timestamp,
         },
       ],
     });
@@ -68,6 +69,166 @@ router.post("/:_id/deposit", async (req, res) => {
   }
 });
 
+router.post("/:_id/plan", async (req, res) => {
+  const { _id } = req.params;
+  const { subname, subamount, from ,timestamp,to} = req.body;
+
+  const user = await UsersDatabase.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      status: 404,
+      message: "User not found",
+    });
+
+    return;
+  }
+  try {
+    // Calculate the new balance by subtracting subamount from the existing balance
+    const newBalance = user.balance - subamount;
+
+    await user.updateOne({
+      transactions: [
+        ...user.plansHistory,
+        {
+          _id: uuidv4(),
+          subname,
+          subamount,
+          from,
+          timestamp,
+        },
+      ],
+      balance: newBalance, // Update the user's balance
+    });
+
+
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Deposit was successful",
+    });
+
+    sendPlanEmail({
+      subamount: subamount,
+      subname: subname,
+      from: from,
+      timestamp:timestamp
+    });
+
+
+    sendUserPlanEmail({
+      subamount: subamount,
+      subname: subname,
+      from: from,
+      to:to,
+      timestamp:timestamp
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+
+router.put("/:_id/transactions/:transactionId/confirm", async (req, res) => {
+  
+  const { _id } = req.params;
+  const { transactionId } = req.params;
+
+  const user = await UsersDatabase.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      status: 404,
+      message: "User not found",
+    });
+
+    return;
+  }
+
+  try {
+    const depositsArray = user.transactions;
+    const depositsTx = depositsArray.filter(
+      (tx) => tx._id === transactionId
+    );
+
+    depositsTx[0].status = "Approved";
+    // console.log(withdrawalTx);
+
+    // const cummulativeWithdrawalTx = Object.assign({}, ...user.withdrawals, withdrawalTx[0])
+    // console.log("cummulativeWithdrawalTx", cummulativeWithdrawalTx);
+
+    await user.updateOne({
+      transactions: [
+        ...user.transactions
+        //cummulativeWithdrawalTx
+      ],
+    });
+
+    res.status(200).json({
+      message: "Transaction approved",
+    });
+
+    return;
+  } catch (error) {
+    res.status(302).json({
+      message: "Opps! an error occured",
+    });
+  }
+});
+
+router.put("/:_id/transactions/:transactionId/decline", async (req, res) => {
+  
+  const { _id } = req.params;
+  const { transactionId } = req.params;
+
+  const user = await UsersDatabase.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      status: 404,
+      message: "User not found",
+    });
+
+    return;
+  }
+
+  try {
+    const depositsArray = user.transactions;
+    const depositsTx = depositsArray.filter(
+      (tx) => tx._id === transactionId
+    );
+
+    depositsTx[0].status = "Declined";
+    // console.log(withdrawalTx);
+
+    // const cummulativeWithdrawalTx = Object.assign({}, ...user.withdrawals, withdrawalTx[0])
+    // console.log("cummulativeWithdrawalTx", cummulativeWithdrawalTx);
+
+    await user.updateOne({
+      transactions: [
+        ...user.transactions
+        //cummulativeWithdrawalTx
+      ],
+    });
+
+    res.status(200).json({
+      message: "Transaction declined",
+    });
+
+    return;
+  } catch (error) {
+    res.status(302).json({
+      message: "Opps! an error occured",
+    });
+  }
+});
+
 
 
 router.get("/:_id/deposit/history", async (req, res) => {
@@ -90,6 +251,35 @@ router.get("/:_id/deposit/history", async (req, res) => {
       success: true,
       status: 200,
       data: [...user.transactions],
+    });
+
+  
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+router.get("/:_id/deposit/plan/history", async (req, res) => {
+  const { _id } = req.params;
+
+  const user = await UsersDatabase.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      status: 404,
+      message: "User not found",
+    });
+
+    return;
+  }
+
+  try {
+    res.status(200).json({
+      success: true,
+      status: 200,
+      data: [...user.plansHistory],
     });
 
   
@@ -263,7 +453,6 @@ router.put("/:_id/withdrawals/:transactionId/confirm", async (req, res) => {
     res.status(200).json({
       message: "Transaction approved",
     });
-    // sendDepositApproval({to,amount, method,from})
 
     return;
   } catch (error) {
