@@ -58,6 +58,7 @@ router.post("/register", async (req, res) => {
       balance: 0,
       copytrading:0,
       plan:" ",
+      kyc:"unverified",
       condition:" ",
       referalBonus: 0,
       transactions: [],

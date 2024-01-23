@@ -17,6 +17,12 @@ const UsersSchema = new mongoose.Schema({
     type: String,
     
   },
+  kyc: {
+    type: String,
+    
+  },
+
+
   email: {
     type: String,
     required: true,
