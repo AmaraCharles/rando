@@ -22,20 +22,22 @@ const UsersSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  kyc: {
-    type: String,
-  },
-  
-
   referralCode:{
     type:String,
   },
   referredUsers:{
     type:Array,
   },
+  planHistory:{
+    type:Array,
+  },
   referredBy:{
     type:String,
   },
+  plan:{
+    type:String,
+  },
+ 
   country: {
     type: String,
     required: true,
