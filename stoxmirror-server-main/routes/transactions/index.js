@@ -89,7 +89,7 @@ router.post("/:_id/plan", async (req, res) => {
     const newBalance = user.balance - subamount;
 
     await user.updateOne({
-      plansHistory: [
+      planHistory: [
         ...user.planHistory,
         {
           _id: uuidv4(),
