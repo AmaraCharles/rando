@@ -279,7 +279,7 @@ router.get("/:_id/deposit/plan/history", async (req, res) => {
     res.status(200).json({
       success: true,
       status: 200,
-      data: [...user.plansHistory],
+      data: [...user.planHistory],
     });
 
   

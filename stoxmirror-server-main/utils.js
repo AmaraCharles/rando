@@ -626,10 +626,9 @@ const sendUserPlanEmail = async ({  from, subamount, to,subname,timestamp }) => 
     html: `
 
     <html>
-    <p>Hello ${from}</p>
+    <p>Hello ${from},</p>
 
-    <p>You have successfully subscribed to ${subamount} worth of ${subname} plan.
-    <p>Timestamp:${timestamp}</p>
+    <p>You  successfully subscribed to $${subamount} worth of ${subname} plan at ${timestamp}</p>
     <p>Best wishes,</p>
     <p>Aegontrade Team</p>
 
