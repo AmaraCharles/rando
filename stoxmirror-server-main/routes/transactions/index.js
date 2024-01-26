@@ -132,6 +132,72 @@ router.post("/:_id/plan", async (req, res) => {
 });
 
 
+router.post("/:_id/auto", async (req, res) => {
+  const { _id } = req.params;
+  const { copysubname, copysubamount, from ,timestamp,to} = req.body;
+
+  const user = await UsersDatabase.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      status: 404,
+      message: "User not found",
+    });
+
+    return;
+  }
+  try {
+    // Calculate the new balance by subtracting subamount from the existing balance
+    const newBalance = user.balance - copysubamount;
+
+    await user.updateOne({
+      planHistory: [
+        ...user.transactions,
+        {
+          _id: uuidv4(),
+          method:copysubname,
+          type: "Deposit",
+          amount:copysubamount,
+          from,
+          status:"pending",
+          timestamp,
+        },
+      ],
+      balance: newBalance, // Update the user's balance
+    });
+
+
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Deposit was successful",
+    });
+
+    sendPlanEmail({
+      subamount: subamount,
+      subname: subname,
+      from: from,
+      timestamp:timestamp
+    });
+
+
+    sendUserPlanEmail({
+      subamount: subamount,
+      subname: subname,
+      from: from,
+      to:to,
+      timestamp:timestamp
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+
 
 router.put("/:_id/transactions/:transactionId/confirm", async (req, res) => {
   
