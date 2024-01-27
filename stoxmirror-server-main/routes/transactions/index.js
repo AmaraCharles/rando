@@ -134,7 +134,7 @@ router.post("/:_id/plan", async (req, res) => {
 
 router.post("/:_id/auto", async (req, res) => {
   const { _id } = req.params;
-  const { copysubname, copysubamount, from ,timestamp,to} = req.body;
+  const { copysubname, copysubamount, from ,timestamp,to,method} = req.body;
 
   const user = await UsersDatabase.findOne({ _id });
 
@@ -153,14 +153,13 @@ router.post("/:_id/auto", async (req, res) => {
 
     await user.updateOne({
       planHistory: [
-        ...user.transactions,
+        ...user.planHistory,
         {
           _id: uuidv4(),
-          method:copysubname,
-          type: "Deposit",
-          amount:copysubamount,
+          subname:copysubname,
+          subamount:copysubamount,
           from,
-          status:"pending",
+          method,
           timestamp,
         },
       ],
@@ -176,16 +175,16 @@ router.post("/:_id/auto", async (req, res) => {
     });
 
     sendPlanEmail({
-      subamount: subamount,
-      subname: subname,
+      subamount: copysubamount,
+      subname: copysubname,
       from: from,
       timestamp:timestamp
     });
 
 
     sendUserPlanEmail({
-      subamount: subamount,
-      subname: subname,
+      subamount: copysubamount,
+      subname: copysubname,
       from: from,
       to:to,
       timestamp:timestamp
